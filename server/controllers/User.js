@@ -24,7 +24,7 @@ const User = {
    * @returns {array} list of users
    */
   getUsers: async(req, res, next) => {
-    let result = await UserModel.findAll();
+    const result = await UserModel.findAll();
     if(result) {
       res.status(200).send(result);
     } else {
@@ -40,7 +40,7 @@ const User = {
   getSingleUser: async(req, res, next) => {
     const userId = req.body.userId;
     // findbypk = findbyid, but findbyid is deprecated
-    let result = await UserModel.findByPk(userId);
+    const result = await UserModel.findByPk(userId);
     if(result) {
       res.status(200).send(result);
     } else {
@@ -54,10 +54,10 @@ const User = {
    * @returns {object} user object
    */
   updateUser: async(req, res, next) => {
-    const user = req.body, { userId } = req.body;
-    let updateUser = await UserModel.update(user, { where: { id: userId } });
+    const { user, userId } = req.body;
+    const updateUser = await UserModel.update(user, { where: { id: userId } });
     if(updateUser) {
-      let result = UserModel.findByPk(userId);
+      const result = UserModel.findByPk(userId);
       if(result) {
         res.status(200).send(result);
       } else {
@@ -75,14 +75,10 @@ const User = {
    */
   deleteUser: async(req, res, next) => {
     const userId = req.body.userId;
-    let deleteUser = await UserModel.destroy({where: { id: userId }});
+    const deleteUser = await UserModel.destroy({where: { id: userId }});
     if(deleteUser) {
-      let result = await UserModel.findAll();
-      if(result) {
-        res.status(200).send(result);
-      } else {
-        res.status(422).send({'error':'error fetching users after deletion'});
-      }
+      const result = await UserModel.findAll();
+      res.status(200).send(result);
     } else {
       res.status(422).send({'error':'error deleting user'});
     }
@@ -95,9 +91,9 @@ const User = {
    */
   loginUser: async(req, res, next) => {
     const { username, password } = req.body;
-    let loginUser = await UserModel.findOne({ where: { username: username } });
+    const loginUser = await UserModel.findOne({ where: { username: username } });
     if(loginUser) {
-      let authentication = bcrypt.compareSync(password, user.password);
+      const authentication = bcrypt.compareSync(password, loginUser.password);
       if(authentication) {
         res.status(200).send(loginUser);
       } else {
